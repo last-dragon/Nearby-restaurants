@@ -49,24 +49,24 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 Openning the site at the first time will result in something like the picture below:
 
-![First Visit](/assets/FirstVisit.png)
+![First Visit](/front-end/assets/Firstpage.png)
 
-By default, the map assumes that the user is located at Stockholm, Sweden.
+By default, the map assumes that the user is located at Melborune, Australia.
 
-After clicking on the position button, it will pan to the user's actual position. It might take some seconds but it should show correctly like the picture below:
+After clicking on the position button, it will pan to the user's actual position. After that click the search button, you can see the 20 restaurant near by you that ranked by recommend:
 
-![User Location](/assets/UserLocation.png)
+![Nearby Search](/front-end/assets/SearchNearbyme.png.png)
 
-Then if you feel like it you can change the radius and click on the search button to get something like this:
+Then you can insert country and city name to find the restaurant.
 
-![Nearby Search](/assets/NearbySearch.png)
+![Location Search](/front-end/assets/Searchbylocation.png)
 
 And finally, you can click on a restaurant card to pan towrds its location:
 
-![Pan to Restaurant](/assets/PanToRestaurant.png)
+![View Popular Times](/front-end/assets/Viewpopuartimes.png)
+
+![View Live Feed](/front-end/assets/ViewLiveFeed.png)
 
 ## Conclusion
 
-I enjoyed working on this project, it was fun using the Google Maps API. Nevertheless, I still struggled using it especially with React. There was no clear documentation and the one provided by Google Developers while very helpfull didn't give enough examples and some of the ones that were provided had some errors.
-
-Overall, I would rate it 8 out of 10. Still better than Bluetooth on Android :(
+I enjoyed working on this project, it was fun using the Google Maps API.
