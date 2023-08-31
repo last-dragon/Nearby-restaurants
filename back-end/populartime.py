@@ -20,7 +20,7 @@ def my_function():
 
 def get_popular_time(data):
     place_id = data.get("placeId")
-    result = populartimes.get_id("AIzaSyAqZqcJ_WYIffSu__AsX1FIm0v5IFcOajM", place_id)
+    result = populartimes.get_id("", place_id)
     return {'message': 'Hello from Python!', 'data': result}
 
 if __name__ == '__main__':
