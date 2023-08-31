@@ -23,6 +23,7 @@ Make sure to replace YOUR_API_KEY_HERE with your Google Maps API Key!
 First, You have to run the scraping Flask server on server directory:
 
 ```bash
+pip install flask, populartimes
 python populartime.py
 ```
 It's running on the [https://localhost:5000](http://localhost:5000)
