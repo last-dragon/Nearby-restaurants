@@ -13,6 +13,7 @@ export interface MapState {
     ccsearch:boolean,
     rsearch:boolean,
     places: google.maps.places.PlaceResult[],
+    popular_times: any,
     radius: number
 }
 
@@ -29,6 +30,7 @@ export interface MapAction {
     ccsearch?:boolean,
     rsearch?:boolean,
     places?: google.maps.places.PlaceResult[],
+    popular_times?: any,
     radius?: number
 }
 

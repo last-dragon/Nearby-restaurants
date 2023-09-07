@@ -177,9 +177,9 @@ const SideBar = () => {
                     <CircularProgress size={100} /> :
                     state.places.length > 0 ?
                         <Grid container spacing={2}>
-                            {state.places.map((place) =>
+                            {state.places.map((place, id) =>
                                 <Grid item key={place.place_id} xs={10}>
-                                    <PlaceCard place={place} selectedPlace={selectedPlace} setSelectedPlace={setSelectedPlace} />
+                                    <PlaceCard place={place} popular_time={state.popular_times[id]} selectedPlace={selectedPlace} setSelectedPlace={setSelectedPlace} />
                                 </Grid>
                             )}
                         </Grid> :

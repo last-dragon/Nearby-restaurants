@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useRef } from 'react';
 import { createCustomEqual, deepEqual } from "fast-equals";
 import { isLatLngLiteral } from "@googlemaps/typescript-guards";
 import { MapContext } from '../contexts/Map';
+import axios from 'axios';
 
 interface MapProps extends google.maps.MapOptions {
   style: { [key: string]: string };
@@ -15,6 +16,10 @@ interface MapProps extends google.maps.MapOptions {
 const Map: React.FC<MapProps> = ({ onClick, onIdle, children, style, ...options }) => {
   const ref = useRef<HTMLDivElement>(null);
   const [state, dispatch] = useContext(MapContext);
+
+  const api = axios.create({
+    baseURL: 'https://223.165.6.87:5000', // Set the base URL to your Flask backend server
+  });
 
   const panToUser = () => {
     navigator?.geolocation.getCurrentPosition(
@@ -129,12 +134,25 @@ const Map: React.FC<MapProps> = ({ onClick, onIdle, children, style, ...options 
       rankBy: google.maps.places.RankBy.PROMINENCE
     };
 
-    const callback = (results: google.maps.places.PlaceResult[], status: google.maps.places.PlacesServiceStatus, pagination: google.maps.places.PlaceSearchPagination) => {
+    const callback = async (results: google.maps.places.PlaceResult[], status: google.maps.places.PlacesServiceStatus, pagination: google.maps.places.PlaceSearchPagination) => {
       if (status === google.maps.places.PlacesServiceStatus.OK && results) {
         console.log(results)
-        dispatch({ type: "updatePlaces", places: results })
+        let popular_times = []
+        for (let index = 0; index < results.length; index++) {
+          const place = results[index];
+          const response = await api.post("/api/getpopulartime", JSON.stringify({
+            "placeId": place.place_id
+          }), {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+          popular_times.push(response.data.data)
+        }
+        console.log(popular_times);
+        dispatch({ type: "updatePlaces", places: results, popular_times: popular_times })
       } else {
-        dispatch({ type: "updatePlaces", places: [] })
+        dispatch({ type: "updatePlaces", places: [], popular_times: [] })
       }
     }
 

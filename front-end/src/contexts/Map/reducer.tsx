@@ -13,6 +13,7 @@ export const initialState = {
   ccsearch: false,
   rsearch: false,
   places: [],
+  popular_times: [],
   radius: 10
 };
 
@@ -80,6 +81,7 @@ export const reducer: MapReducer = (state: MapState, action: MapAction) => {
         return {
           ...state,
           places: action.places,
+          popular_times: action.popular_times,
           search: false,
           ccsearch: false,
           rsearch: false
