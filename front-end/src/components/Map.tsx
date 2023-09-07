@@ -19,6 +19,7 @@ const Map: React.FC<MapProps> = ({ onClick, onIdle, children, style, ...options 
   const panToUser = () => {
     navigator?.geolocation.getCurrentPosition(
       (position: GeolocationPosition) => {
+        // console.log(position);
         dispatch({
           type: "updateLocation",
           userLat: position.coords.latitude,
@@ -57,7 +58,52 @@ const Map: React.FC<MapProps> = ({ onClick, onIdle, children, style, ...options 
         const callback = (places: google.maps.places.PlaceResult[], status: google.maps.places.PlacesServiceStatus, pagination: google.maps.places.PlaceSearchPagination) => {
           if (status === google.maps.places.PlacesServiceStatus.OK && places) {
             dispatch({ type: "updatePlaces", places: places });
-            console.log(places);
+            // console.log(places);
+          } else {
+            dispatch({ type: "updatePlaces", places: [] });
+          }
+        };
+
+        if (state?.service) {
+          state.service.nearbySearch(request, callback);
+        } else {
+          dispatch({ type: "updatePlaces", places: [] });
+        }
+      } else {
+        dispatch({ type: "updatePlaces", places: [] });
+      }
+    });
+  };
+
+  const searchrestaurant = (city: string, country: string, restaurant: string) => {
+    const geocoder = new google.maps.Geocoder();
+
+    geocoder.geocode({ address: `${city}, ${country},${restaurant}` }, (results, status) => {
+      if (status === google.maps.GeocoderStatus.OK && results.length > 0) {
+        const location = results[0].geometry.location;
+
+        if (state?.map) {
+          dispatch({
+            type: "updateLocation",
+            userLat: Number(location.lat),
+            userLong: Number(location.lng)
+          });
+          state.map.setZoom(15);
+          state.map.panTo(location);
+        }
+
+        const request = {
+          location: location,
+          radius: state.radius * 1000,
+          type: 'restaurant',
+          keyword: restaurant,
+          rankBy: google.maps.places.RankBy.PROMINENCE
+        };
+
+        const callback = (places: google.maps.places.PlaceResult[], status: google.maps.places.PlacesServiceStatus, pagination: google.maps.places.PlaceSearchPagination) => {
+          if (status === google.maps.places.PlacesServiceStatus.OK && places) {
+            dispatch({ type: "updatePlaces", places: places });
+            // console.log(places);
           } else {
             dispatch({ type: "updatePlaces", places: [] });
           }
@@ -85,6 +131,7 @@ const Map: React.FC<MapProps> = ({ onClick, onIdle, children, style, ...options 
 
     const callback = (results: google.maps.places.PlaceResult[], status: google.maps.places.PlacesServiceStatus, pagination: google.maps.places.PlaceSearchPagination) => {
       if (status === google.maps.places.PlacesServiceStatus.OK && results) {
+        console.log(results)
         dispatch({ type: "updatePlaces", places: results })
       } else {
         dispatch({ type: "updatePlaces", places: [] })
@@ -107,6 +154,9 @@ const Map: React.FC<MapProps> = ({ onClick, onIdle, children, style, ...options 
     }
     if (state?.ccsearch) {
       searchCountryCity(state.country, state.city)
+    }
+    if (state?.rsearch) {
+      searchrestaurant(state.country, state.city, state.restaurant)
     }
   }, [state])
 

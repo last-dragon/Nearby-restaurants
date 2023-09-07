@@ -4,12 +4,14 @@ export const initialState = {
   map: null,
   country: '',
   city: '',
+  restaurant: '',
   userLat: -37.8136,
   userLong: 144.9631, 
   pan: false,
   service: null,
   search: false,
   ccsearch: false,
+  rsearch: false,
   places: [],
   radius: 10
 };
@@ -56,10 +58,22 @@ export const reducer: MapReducer = (state: MapState, action: MapAction) => {
         city: action.city
       }
 
+      case "updaterestaurant":
+      return {
+        ...state,
+        restaurant: action.restaurant
+      }
+
       case "searchCountryCity":
         return{
           ...state,
           ccsearch:true
+        }
+
+      case "searchrestaurant":
+        return{
+          ...state,
+          rsearch:true
         }
       
       case "updatePlaces":
@@ -68,6 +82,7 @@ export const reducer: MapReducer = (state: MapState, action: MapAction) => {
           places: action.places,
           search: false,
           ccsearch: false,
+          rsearch: false
         }
       
       case "updateRadius":

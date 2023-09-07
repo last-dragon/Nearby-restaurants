@@ -5,11 +5,13 @@ export interface MapState {
     service: google.maps.places.PlacesService | null,
     country: string,
     city: string,
+    restaurant: string,
     userLat: number,
     userLong: number,
     pan: boolean, 
     search: boolean,
     ccsearch:boolean,
+    rsearch:boolean,
     places: google.maps.places.PlaceResult[],
     radius: number
 }
@@ -18,12 +20,14 @@ export interface MapAction {
     type: string,
     country?: string,
     city?: string,
+    restaurant?: string,
     userLat?: number,
     userLong?: number,
     map?: google.maps.Map,
     pan?: boolean,
     search?: boolean,
     ccsearch?:boolean,
+    rsearch?:boolean,
     places?: google.maps.places.PlaceResult[],
     radius?: number
 }

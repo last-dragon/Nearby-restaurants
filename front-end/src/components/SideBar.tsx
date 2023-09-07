@@ -100,14 +100,14 @@ const SideBar = () => {
             }}>
                 <Grid container spacing={2}>
                     <Grid item xs={4}>
-                        <TextField id="country" label="Country" variant="outlined" value={state.country}
+                        <TextField id="country" label="Country or State" variant="outlined" value={state.country}
                             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                                 dispatch({ type: "updateCountry", country: event.target.value })
                             }
                             } />
                     </Grid>
                     <Grid item xs={4}>
-                        <TextField id="city" label="City" variant="outlined" value={state.city}
+                        <TextField id="city" label="City or Suburb" variant="outlined" value={state.city}
                             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                                 dispatch({ type: "updateCity", city: event.target.value })
                             }
@@ -122,6 +122,44 @@ const SideBar = () => {
                                 marginRight: '15px'
                             }}
                             onClick={() => dispatch({ type: "searchCountryCity" })}>
+                            <SearchOutlinedIcon />
+                        </Button>
+                    </Grid>
+                </Grid>
+            </Box>
+            <Box sx={{
+                display: 'flex',
+                flexDirection: 'row',
+                width: '95%',
+                minHeight: '100px',
+                padding: '0px 10px',
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderColor: 'primary.main',
+                borderWidth: '0.5px',
+                borderStyle: 'solid',
+                borderRadius: '5px',
+                '&:hover': {
+                    borderWidth: '1px',
+                },
+            }}>
+                <Grid container spacing={2}>
+                    <Grid item xs={4}>
+                        <TextField id="restaurant" label="Restaurant Name" variant="outlined" value={state.restaurant}
+                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                dispatch({ type: "updaterestaurant", restaurant: event.target.value })
+                            }
+                            } />
+                    </Grid>
+                    <Grid item xs={4}>
+                        <Button
+                            variant="contained"
+                            sx={{
+                                width: '45px',
+                                height: '45px',
+                                marginRight: '15px'
+                            }}
+                            onClick={() => dispatch({ type: "searchrestaurant" })}>
                             <SearchOutlinedIcon />
                         </Button>
                     </Grid>
@@ -150,7 +188,7 @@ const SideBar = () => {
                         </Typography>
                 }
             </Box>
-        </Box>
+        </Box >
     )
 }
 
