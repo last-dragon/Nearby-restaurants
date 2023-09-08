@@ -19,7 +19,11 @@ const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Fri
 
 const PlaceCard = ({ place, popular_time, selectedPlace, setSelectedPlace }: PlaceCardProps) => {
 
-
+    const handleCardClick = (placeId: string) => {
+        setSelectedPlace((prevSelectedPlace) =>
+          prevSelectedPlace === placeId ? null : placeId
+        );
+      };
 
     const [state, dispatch] = useContext(MapContext);
     // const [responseData, setResponseData] = useState({ id: '', phone_number: '', populartimes: [], current_popularity: 0, coordinates: { lat: 0, lng: 0 } });
@@ -37,13 +41,15 @@ const PlaceCard = ({ place, popular_time, selectedPlace, setSelectedPlace }: Pla
     // }, [responseData])
 
     // useEffect(() => console.log(selectedPlace), [selectedPlace])
-    console.log("From Place Card", popular_time);
-    fetch(`https://maps.googleapis.com/maps/api/timezone/json?location=${popular_time.coordinates.lat},${popular_time.coordinates.lng}&timestamp=${Math.floor(Date.now() / 1000)}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`)
+    // console.log("From Place Card", popular_time);
+    useEffect(() => {  
+        fetch(`https://maps.googleapis.com/maps/api/timezone/json?location=${popular_time.coordinates.lat},${popular_time.coordinates.lng}&timestamp=${Math.floor(Date.now() / 1000)}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`)
         .then(res => res.json())
         .then(res => {
             // console.log(res);
             settimeZoneId(res.timeZoneId);
         })
+    }, [])
 
     const currentTime = new Date().toLocaleTimeString("en-US", { timeZone: timeZoneId, hour12: false });
     // console.log(currentTime);
@@ -111,8 +117,9 @@ const PlaceCard = ({ place, popular_time, selectedPlace, setSelectedPlace }: Pla
 
     return (
         <Card onClick={async () => {
+            handleCardClick(place.place_id);
             if (state.map && place.geometry?.location) {
-                state.map?.setZoom(17);
+                state.map?.setZoom(20);
                 state.map?.panTo(place.geometry?.location);
             }
         }
@@ -225,22 +232,28 @@ const PlaceCard = ({ place, popular_time, selectedPlace, setSelectedPlace }: Pla
                 </Typography>
 
                 <Collapse in={selectedPlace === place.place_id} timeout="auto" unmountOnExit>
-                    <Typography variant="body2" color="text.secondary" sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: 'center'
-                    }}>
-                        <Rating name="read-only" value={place.rating} precision={0.1} readOnly sx={{ marginRight: '5px' }} />
-                        <span>({place.user_ratings_total})</span>
-                    </Typography>
-                    <Typography noWrap variant="body2" color="text.secondary" sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                    }}>
-                        <MapIcon sx={{ marginRight: '5px' }} />
-                        <span >{place.vicinity}</span>
-                    </Typography>
+                    <Card>
+
+                        <CardContent>
+                            <Typography variant="body2" color="text.secondary" sx={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                alignItems: 'center'
+                            }}>
+                                <Rating name="read-only" value={place.rating} precision={0.1} readOnly sx={{ marginRight: '5px' }} />
+                                <span>({place.user_ratings_total})</span>
+                            </Typography>
+                            <Typography noWrap variant="body2" color="text.secondary" sx={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                            }}>
+                                <MapIcon sx={{ marginRight: '5px' }} />
+                                <span >{place.vicinity}</span>
+                            </Typography>
+                        </CardContent>
+
+                    </Card>
                 </Collapse>
             </CardContent>
         </Card>

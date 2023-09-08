@@ -2,9 +2,11 @@ import { Box, TextField, Button, CircularProgress, Grid, Typography } from "@mui
 import DistanceSlider from "./DistanceSlider";
 import MyLocationOutlinedIcon from '@mui/icons-material/MyLocationOutlined';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
-import { useContext, useState } from "react";
+import { useContext, useState, useRef } from "react";
 import { MapContext } from "../contexts/Map";
 import PlaceCard from "./PlaceCard";
+import { getValue } from "@testing-library/user-event/dist/utils";
+import { idText } from "typescript";
 
 const SideBar = () => {
 
@@ -16,6 +18,24 @@ const SideBar = () => {
     const indexOfLastCard = currentPage * cardsPerPage;
     const indexOfFirstCard = indexOfLastCard - cardsPerPage;
     const currentCards = state.places.slice(indexOfFirstCard, indexOfLastCard);
+
+    const countryRef = useRef(null);
+    const cityRef = useRef(null);
+
+    const handleSearch = () => {
+        const countryValue = countryRef.current?.value || '';
+        const cityValue = cityRef.current?.value || '';
+
+        dispatch({
+            type: "updateCountry",
+            country: countryRef.current?.value || ""
+        });
+        dispatch({
+            type: "updateCity",
+            city: cityRef.current?.value || ""
+        });
+        dispatch({ type: "searchCountryCity" });
+    };
 
     return (
         <Box sx={{
@@ -100,18 +120,10 @@ const SideBar = () => {
             }}>
                 <Grid container spacing={2}>
                     <Grid item xs={4}>
-                        <TextField id="country" label="Country or State" variant="outlined" value={state.country}
-                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                dispatch({ type: "updateCountry", country: event.target.value })
-                            }
-                            } />
+                        <TextField id="country" label="Country or State" variant="outlined" inputRef={countryRef}  />
                     </Grid>
                     <Grid item xs={4}>
-                        <TextField id="city" label="City or Suburb" variant="outlined" value={state.city}
-                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                dispatch({ type: "updateCity", city: event.target.value })
-                            }
-                            } />
+                        <TextField id="city" label="City or Suburb" variant="outlined" inputRef={cityRef} />
                     </Grid>
                     <Grid item xs={4}>
                         <Button
@@ -121,7 +133,7 @@ const SideBar = () => {
                                 height: '45px',
                                 marginRight: '15px'
                             }}
-                            onClick={() => dispatch({ type: "searchCountryCity" })}>
+                            onClick={() => {handleSearch()}}>
                             <SearchOutlinedIcon />
                         </Button>
                     </Grid>
