@@ -17,6 +17,16 @@ const Map: React.FC<MapProps> = ({ onClick, onIdle, children, style, ...options 
   const ref = useRef<HTMLDivElement>(null);
   const [state, dispatch] = useContext(MapContext);
 
+  const {
+    pan: statePan,
+    search: stateSearch,
+    ccsearch: stateCcsearch,
+    rsearch: stateRsearch,
+    country: stateCountry,
+    city: stateCity,
+    restaurant: stateRestaurant
+  } = state;
+
   const api = axios.create({
     baseURL: 'https://223.165.6.87:5000', // Set the base URL to your Flask backend server
   });
@@ -55,27 +65,40 @@ const Map: React.FC<MapProps> = ({ onClick, onIdle, children, style, ...options 
 
         const request = {
           location: location,
-          radius: state.radius * 1000,
+          // radius: state.radius * 1000,
           type: 'restaurant',
-          rankBy: google.maps.places.RankBy.PROMINENCE
+          rankBy: google.maps.places.RankBy.DISTANCE
         };
+        // console.log(state.country, state.city);
 
-        const callback = (places: google.maps.places.PlaceResult[], status: google.maps.places.PlacesServiceStatus, pagination: google.maps.places.PlaceSearchPagination) => {
+        const callback = async (places: google.maps.places.PlaceResult[], status: google.maps.places.PlacesServiceStatus, pagination: google.maps.places.PlaceSearchPagination) => {
           if (status === google.maps.places.PlacesServiceStatus.OK && places) {
-            dispatch({ type: "updatePlaces", places: places });
+            // console.log(places);
+            let popular_times = []
+            for (let index = 0; index < places.length; index++) {
+              const place = places[index];
+              const response = await api.post("/api/getpopulartime", JSON.stringify({
+                "placeId": place.place_id
+              }), {
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              });
+              popular_times.push(response.data.data)
+            }
+            // console.log(popular_times)
+            dispatch({ type: "updatePlaces", places: places, popular_times: popular_times });
             // console.log(places);
           } else {
-            dispatch({ type: "updatePlaces", places: [] });
+            dispatch({ type: "updatePlaces", places: [], popular_times: [] });
           }
         };
 
         if (state?.service) {
           state.service.nearbySearch(request, callback);
         } else {
-          dispatch({ type: "updatePlaces", places: [] });
+          dispatch({ type: "updatePlaces", places: [], popular_times: [] });
         }
-      } else {
-        dispatch({ type: "updatePlaces", places: [] });
       }
     });
   };
@@ -105,22 +128,34 @@ const Map: React.FC<MapProps> = ({ onClick, onIdle, children, style, ...options 
           rankBy: google.maps.places.RankBy.PROMINENCE
         };
 
-        const callback = (places: google.maps.places.PlaceResult[], status: google.maps.places.PlacesServiceStatus, pagination: google.maps.places.PlaceSearchPagination) => {
+        const callback = async (places: google.maps.places.PlaceResult[], status: google.maps.places.PlacesServiceStatus, pagination: google.maps.places.PlaceSearchPagination) => {
           if (status === google.maps.places.PlacesServiceStatus.OK && places) {
-            dispatch({ type: "updatePlaces", places: places });
+            let popular_times = []
             // console.log(places);
+            for (let index = 0; index < places.length; index++) {
+              const place = places[index];
+              const response = await api.post("/api/getpopulartime", JSON.stringify({
+                "placeId": place.place_id
+              }), {
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              });
+              popular_times.push(response.data.data)
+            }
+            // console.log(popular_times);
+            dispatch({ type: "updatePlaces", places: places,  popular_times: popular_times});
+            
           } else {
-            dispatch({ type: "updatePlaces", places: [] });
+            dispatch({ type: "updatePlaces", places: [], popular_times: [] });
           }
         };
 
         if (state?.service) {
           state.service.nearbySearch(request, callback);
         } else {
-          dispatch({ type: "updatePlaces", places: [] });
+          dispatch({ type: "updatePlaces", places: [], popular_times: [] });
         }
-      } else {
-        dispatch({ type: "updatePlaces", places: [] });
       }
     });
   };
@@ -129,14 +164,14 @@ const Map: React.FC<MapProps> = ({ onClick, onIdle, children, style, ...options 
 
     const request = {
       location: { lat: state.userLat, lng: state.userLong },
-      radius: state.radius * 1000,
+      // radius: state.radius * 1000,
       type: 'restaurant',
-      rankBy: google.maps.places.RankBy.PROMINENCE
+      rankBy: google.maps.places.RankBy.DISTANCE
     };
 
     const callback = async (results: google.maps.places.PlaceResult[], status: google.maps.places.PlacesServiceStatus, pagination: google.maps.places.PlaceSearchPagination) => {
       if (status === google.maps.places.PlacesServiceStatus.OK && results) {
-        console.log(results)
+        // console.log(results)
         let popular_times = []
         for (let index = 0; index < results.length; index++) {
           const place = results[index];
@@ -149,7 +184,7 @@ const Map: React.FC<MapProps> = ({ onClick, onIdle, children, style, ...options 
           });
           popular_times.push(response.data.data)
         }
-        console.log(popular_times);
+        // console.log(popular_times);
         dispatch({ type: "updatePlaces", places: results, popular_times: popular_times })
       } else {
         dispatch({ type: "updatePlaces", places: [], popular_times: [] })
@@ -159,24 +194,30 @@ const Map: React.FC<MapProps> = ({ onClick, onIdle, children, style, ...options 
     if (state?.service) {
       state.service.nearbySearch(request, callback);
     } else {
-      dispatch({ type: "updatePlaces", places: [] })
+      dispatch({ type: "updatePlaces", places: [], popular_times: [] })
     }
   }
-
+  
   useEffect(() => {
-    if (state?.pan) {
+    if (statePan) {
       panToUser()
     }
-    if (state?.search) {
+  }, [statePan])
+  useEffect(() => {
+    if (stateSearch) {
       searchNearby()
     }
-    if (state?.ccsearch) {
-      searchCountryCity(state.country, state.city)
+  }, [stateSearch])
+  useEffect(() => {
+    if (stateCcsearch) {
+      searchCountryCity(stateCountry, stateCity)
     }
-    if (state?.rsearch) {
-      searchrestaurant(state.country, state.city, state.restaurant)
+  }, [stateCcsearch, stateCountry, stateCity])
+  useEffect(() => {
+    if (stateRsearch) {
+      searchrestaurant(stateCountry, stateCity, stateRestaurant)
     }
-  }, [state])
+  }, [stateRestaurant, stateCountry, stateCity])
 
   useEffect(() => {
     if (ref.current && !state?.map) {
