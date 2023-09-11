@@ -14,7 +14,7 @@ export const initialState = {
   rsearch: false,
   places: [],
   popular_times: [],
-  radius: 10
+  radius: 5
 };
 
 export const reducer: MapReducer = (state: MapState, action: MapAction) => {

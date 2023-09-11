@@ -65,7 +65,7 @@ const SideBar = () => {
                     borderWidth: '1px',
                 },
             }}>
-                <DistanceSlider
+                {/* <DistanceSlider
                     aria-label="distance slider"
                     valueLabelDisplay="on"
                     max={100}
@@ -81,7 +81,7 @@ const SideBar = () => {
                         marginRight: '15px',
                         transform: 'translateY(40%)',
                     }}
-                />
+                /> */}
                 <Button
                     variant="contained"
                     sx={{

@@ -21,9 +21,9 @@ const PlaceCard = ({ place, popular_time, selectedPlace, setSelectedPlace }: Pla
 
     const handleCardClick = (placeId: string) => {
         setSelectedPlace((prevSelectedPlace) =>
-          prevSelectedPlace === placeId ? null : placeId
+            prevSelectedPlace === placeId ? null : placeId
         );
-      };
+    };
 
     const [state, dispatch] = useContext(MapContext);
     // const [responseData, setResponseData] = useState({ id: '', phone_number: '', populartimes: [], current_popularity: 0, coordinates: { lat: 0, lng: 0 } });
@@ -42,13 +42,13 @@ const PlaceCard = ({ place, popular_time, selectedPlace, setSelectedPlace }: Pla
 
     // useEffect(() => console.log(selectedPlace), [selectedPlace])
     // console.log("From Place Card", popular_time);
-    useEffect(() => {  
+    useEffect(() => {
         fetch(`https://maps.googleapis.com/maps/api/timezone/json?location=${popular_time.coordinates.lat},${popular_time.coordinates.lng}&timestamp=${Math.floor(Date.now() / 1000)}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`)
-        .then(res => res.json())
-        .then(res => {
-            // console.log(res);
-            settimeZoneId(res.timeZoneId);
-        })
+            .then(res => res.json())
+            .then(res => {
+                // console.log(res);
+                settimeZoneId(res.timeZoneId);
+            })
     }, [])
 
     const currentTime = new Date().toLocaleTimeString("en-US", { timeZone: timeZoneId, hour12: false });
@@ -124,12 +124,16 @@ const PlaceCard = ({ place, popular_time, selectedPlace, setSelectedPlace }: Pla
             }
         }
         }>
+
             <CardMedia
                 component="img"
                 height="200"
                 image={place.photos ? place.photos[0].getUrl({ maxWidth: 300, maxHeight: 300 }) : place.icon}
                 alt={place.name}
             />
+            <Typography noWrap variant="h5" component="div" fontWeight={"bold"}>
+                {place.name}
+            </Typography>
             <CardContent sx={{
                 // height: "120px",
                 display: "flex",
@@ -142,94 +146,44 @@ const PlaceCard = ({ place, popular_time, selectedPlace, setSelectedPlace }: Pla
 
                         {(popular_time.current_popularity && popular_time.current_popularity > 0) ? (
                             <div>
-                                <tr>
-                                    <h3>Currently {popular_time.current_popularity}% busy and usually {currentPopularity}% busy now
-                                    </h3>
-                                </tr>
-                                <tr>
-                                    <h4 style={{ color: 'red' }}>Live Feed : </h4><h3>{getPopularityMessage()}</h3>
-                                </tr>
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <h3>Currently {popular_time.current_popularity}% busy and usually {currentPopularity}% busy now
+                                                </h3>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <h4 style={{ color: 'red' }}>Live Feed : </h4><h3>{getPopularityMessage()}</h3>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         ) : (
                             <div>
-                                <tr>
-                                    {<h3>Usually {currentPopularity}% busy now</h3>}
-                                </tr>
-                                <tr>
-                                    <h3>No Live Feed Data</h3>
-                                </tr>
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                {<h3>Usually {currentPopularity}% busy now</h3>}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <h3>No Live Feed Data</h3>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         )}
-                        {(popular_time.populartimes && popular_time.populartimes.length > 0) ? (
-                            // <div>
-                            //     <Grid container spacing={2}>
-                            //         <Grid item xs={4}>
-                            //             <h3>Popular Times</h3>
-                            //         </Grid>
-                            //         <Grid item xs={4}>
-                            //             <Select value={selectedDay} onChange={handleDayChange}>
-                            //                 {daysOfWeek.map((day, index) => (
-                            //                     <MenuItem key={index} value={index}>{day}</MenuItem>
-                            //                 ))}
-                            //             </Select>
-                            //         </Grid>
-                            //     </Grid>
-                            // </div>
-                            <div>
-                                <Grid container spacing={2}>
-                                    <Grid item xs={12}>
-                                        <h3 style={{ color: 'green' }}>Popular times</h3>
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <div>
-                                            {daysOfWeek.map((day, index) => (
-                                                <Button
-                                                    key={index}
-                                                    variant="contained"
-                                                    color={selectedDay === index ? "secondary" : "success"}
-                                                    onClick={() => handleDayChange(index)}
-                                                >
-                                                    {day}
-                                                </Button>
-                                            ))}
-                                        </div>
-                                    </Grid>
-                                </Grid>
-                            </div>
-                        ) : (
-                            <div>No Popular Time!</div>
-                        )}
-                        {popular_time.populartimes && popular_time.populartimes.length > 0 && (
-                            <div>
-                                <BarChart
-                                    width={500}
-                                    height={300}
-                                    series={[{ data: popular_time.populartimes[(selectedDay + 6) % 7].data, label: popular_time.populartimes[(selectedDay + 6) % 7].name, type: 'bar' }]}
-                                    xAxis={[{ data: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'], scaleType: 'band' }]}
-                                >
-                                    <BarPlot />
-                                </BarChart>
-                                {/* <div>
-                <Button
-                    // disabled={activeStep === 0}
-                    onClick={() => setActiveStep(activeStep - 1)}
-                >
-                    Back
-                </Button>
-                <Button
-                    disabled={activeStep === responseData.populartimes.length - 1}
-                    onClick={() => setActiveStep(activeStep + 1)}
-                >
-                    Next
-                </Button>
-            </div> */}
-                            </div>
-                        )}
+
                     </CardContent>
                 </Card>
-                <Typography noWrap variant="h5" component="div" fontWeight={"bold"}>
-                    {place.name}
-                </Typography>
+
 
                 <Collapse in={selectedPlace === place.place_id} timeout="auto" unmountOnExit>
                     <Card>
@@ -251,6 +205,74 @@ const PlaceCard = ({ place, popular_time, selectedPlace, setSelectedPlace }: Pla
                                 <MapIcon sx={{ marginRight: '5px' }} />
                                 <span >{place.vicinity}</span>
                             </Typography>
+                            {(popular_time.populartimes && popular_time.populartimes.length > 0) ? (
+                                // <div>
+                                //     <Grid container spacing={2}>
+                                //         <Grid item xs={4}>
+                                //             <h3>Popular Times</h3>
+                                //         </Grid>
+                                //         <Grid item xs={4}>
+                                //             <Select value={selectedDay} onChange={handleDayChange}>
+                                //                 {daysOfWeek.map((day, index) => (
+                                //                     <MenuItem key={index} value={index}>{day}</MenuItem>
+                                //                 ))}
+                                //             </Select>
+                                //         </Grid>
+                                //     </Grid>
+                                // </div>
+                                <div>
+                                    <Grid container spacing={2}>
+                                        <Grid item xs={12}>
+                                            <h3 style={{ color: 'green' }}>Popular times</h3>
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            <div>
+                                                {daysOfWeek.map((day, index) => (
+                                                    <Button
+                                                        key={index}
+                                                        variant="contained"
+                                                        color={selectedDay === index ? "secondary" : "success"}
+                                                        onClick={(e) => {
+                                                            handleDayChange(index);
+                                                            e.stopPropagation()
+                                                        }}
+                                                    >
+                                                        {day}
+                                                    </Button>
+                                                ))}
+                                            </div>
+                                        </Grid>
+                                    </Grid>
+                                </div>
+                            ) : (
+                                <div>No Popular Time!</div>
+                            )}
+                            {popular_time.populartimes && popular_time.populartimes.length > 0 && (
+                                <div>
+                                    <BarChart
+                                        width={500}
+                                        height={300}
+                                        series={[{ data: popular_time.populartimes[(selectedDay + 6) % 7].data, label: popular_time.populartimes[(selectedDay + 6) % 7].name, type: 'bar' }]}
+                                        xAxis={[{ data: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'], scaleType: 'band' }]}
+                                    >
+                                        <BarPlot />
+                                    </BarChart>
+                                    {/* <div>
+                <Button
+                    // disabled={activeStep === 0}
+                    onClick={() => setActiveStep(activeStep - 1)}
+                >
+                    Back
+                </Button>
+                <Button
+                    disabled={activeStep === responseData.populartimes.length - 1}
+                    onClick={() => setActiveStep(activeStep + 1)}
+                >
+                    Next
+                </Button>
+            </div> */}
+                                </div>
+                            )}
                         </CardContent>
 
                     </Card>
