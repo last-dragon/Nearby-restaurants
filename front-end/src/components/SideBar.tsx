@@ -82,6 +82,11 @@ const SideBar = () => {
                         transform: 'translateY(40%)',
                     }}
                 /> */}
+                <Grid container spacing={1}>
+                <Grid item xs={4}>
+                        <h3>Search Nearest Restaurant</h3>
+                </Grid>
+                <Grid item xs={4}>
                 <Button
                     variant="contained"
                     sx={{
@@ -92,6 +97,8 @@ const SideBar = () => {
                     onClick={() => dispatch({ type: "searchNearby" })}>
                     <SearchOutlinedIcon />
                 </Button>
+                </Grid>
+                <Grid item xs={4}>
                 <Button
                     variant="outlined"
                     sx={{
@@ -101,6 +108,8 @@ const SideBar = () => {
                     onClick={() => dispatch({ type: "panToUser" })}>
                     <MyLocationOutlinedIcon />
                 </Button>
+                </Grid>
+                </Grid>
             </Box>
             <Box sx={{
                 display: 'flex',
@@ -118,14 +127,17 @@ const SideBar = () => {
                     borderWidth: '1px',
                 },
             }}>
-                <Grid container spacing={2}>
+                <Grid container spacing={1}>
                     <Grid item xs={4}>
+                        <h3>Search by Area</h3>
+                    </Grid>
+                    <Grid item xs={3}>
                         <TextField id="country" label="Country or State" variant="outlined" inputRef={countryRef}  />
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item xs={3}>
                         <TextField id="city" label="City or Suburb" variant="outlined" inputRef={cityRef} />
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item xs={2}>
                         <Button
                             variant="contained"
                             sx={{
@@ -156,6 +168,9 @@ const SideBar = () => {
                 },
             }}>
                 <Grid container spacing={2}>
+                    <Grid item xs={4}>
+                        <h3>Search Your Restaurant</h3>
+                    </Grid>
                     <Grid item xs={4}>
                         <TextField id="restaurant" label="Restaurant Name" variant="outlined" value={state.restaurant}
                             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {

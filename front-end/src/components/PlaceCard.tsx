@@ -4,9 +4,11 @@ import { useContext, useEffect, useState } from "react";
 import { MapContext } from "../contexts/Map";
 import axios from 'axios';
 import { ChartContainer, BarPlot, BarChart } from '@mui/x-charts';
+import Lottie from 'react-lottie';
 import IconButton, { IconButtonProps } from '@mui/material/IconButton';
 import { styled } from '@mui/material/styles';
-import { Stepper, Step, StepLabel } from '@mui/material';
+import fireAnimationData from './../lottie/fire1.json';
+import coldAnimationData from './../lottie/ice.json';
 
 interface PlaceCardProps {
     place: google.maps.places.PlaceResult,
@@ -14,7 +16,23 @@ interface PlaceCardProps {
     selectedPlace: string,
     setSelectedPlace: any
 }
-
+const fireAnimationOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: fireAnimationData,
+    rendererSettings: {
+      preserveAspectRatio: 'xMidYMid slice'
+    }
+  };
+  
+  const coldAnimationOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: coldAnimationData,
+    rendererSettings: {
+      preserveAspectRatio: 'xMidYMid slice'
+    }
+  };
 const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 const PlaceCard = ({ place, popular_time, selectedPlace, setSelectedPlace }: PlaceCardProps) => {
@@ -115,11 +133,23 @@ const PlaceCard = ({ place, popular_time, selectedPlace, setSelectedPlace }: Pla
         }
     };
 
+    const getAnimationOptions = () => {
+        if (popular_time.current_popularity && popular_time.current_popularity > 50) {
+          return fireAnimationOptions;
+        } else if (popular_time.current_popularity && popular_time.current_popularity < 50) {
+          return coldAnimationOptions;
+        } else if (!popular_time.current_popularity && currentPopularity > 50) {
+          return fireAnimationOptions;
+        } else {
+          return coldAnimationOptions;
+        }
+      };
+
     return (
         <Card onClick={async () => {
             handleCardClick(place.place_id);
             if (state.map && place.geometry?.location) {
-                state.map?.setZoom(20);
+                state.map?.setZoom(25);
                 state.map?.panTo(place.geometry?.location);
             }
         }
@@ -150,7 +180,7 @@ const PlaceCard = ({ place, popular_time, selectedPlace, setSelectedPlace }: Pla
                                     <tbody>
                                         <tr>
                                             <td>
-                                                <h3>Currently {popular_time.current_popularity}% busy and usually {currentPopularity}% busy now
+                                                <h3><Lottie options={getAnimationOptions()} height={50} width={50} />Currently {popular_time.current_popularity}% busy and usually {currentPopularity}% busy now
                                                 </h3>
                                             </td>
                                         </tr>
@@ -168,7 +198,7 @@ const PlaceCard = ({ place, popular_time, selectedPlace, setSelectedPlace }: Pla
                                     <tbody>
                                         <tr>
                                             <td>
-                                                {<h3>Usually {currentPopularity}% busy now</h3>}
+                                                {<h3><Lottie options={getAnimationOptions()} height={50} width={50} />Usually {currentPopularity}% busy now</h3>}
                                             </td>
                                         </tr>
                                         <tr>

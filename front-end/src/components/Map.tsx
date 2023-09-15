@@ -40,7 +40,7 @@ const Map: React.FC<MapProps> = ({ onClick, onIdle, children, style, ...options 
           userLat: position.coords.latitude,
           userLong: position.coords.longitude
         });
-        state?.map?.setZoom(15);
+        state?.map?.setZoom(20);
         state?.map?.panTo({ lat: position.coords.latitude, lng: position.coords.longitude });
       }
     );
@@ -59,8 +59,8 @@ const Map: React.FC<MapProps> = ({ onClick, onIdle, children, style, ...options 
             userLat: Number(location.lat),
             userLong: Number(location.lng)
           });
-          state.map.setZoom(15);
-          state.map.panTo(location);
+          state.map?.setZoom(20);
+          state.map?.panTo(location);
         }
 
         const request = {
@@ -116,8 +116,8 @@ const Map: React.FC<MapProps> = ({ onClick, onIdle, children, style, ...options 
             userLat: Number(location.lat),
             userLong: Number(location.lng)
           });
-          state.map.setZoom(15);
-          state.map.panTo(location);
+          state.map?.setZoom(20);
+          state.map?.panTo(location);
         }
 
         const request = {
