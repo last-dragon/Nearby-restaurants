@@ -149,7 +149,7 @@ const PlaceCard = ({ place, popular_time, selectedPlace, setSelectedPlace }: Pla
         <Card onClick={async () => {
             handleCardClick(place.place_id);
             if (state.map && place.geometry?.location) {
-                state.map?.setZoom(25);
+                state.map?.setZoom(20);
                 state.map?.panTo(place.geometry?.location);
             }
         }

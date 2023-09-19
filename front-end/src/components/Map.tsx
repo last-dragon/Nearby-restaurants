@@ -40,8 +40,10 @@ const Map: React.FC<MapProps> = ({ onClick, onIdle, children, style, ...options 
           userLat: position.coords.latitude,
           userLong: position.coords.longitude
         });
-        state?.map?.setZoom(20);
-        state?.map?.panTo({ lat: position.coords.latitude, lng: position.coords.longitude });
+        setTimeout(() => {
+          state?.map?.setZoom(18);
+          state?.map?.panTo({ lat: position.coords.latitude, lng: position.coords.longitude });
+        }, 3000);
       }
     );
   }
@@ -59,8 +61,10 @@ const Map: React.FC<MapProps> = ({ onClick, onIdle, children, style, ...options 
             userLat: Number(location.lat),
             userLong: Number(location.lng)
           });
-          state.map?.setZoom(20);
-          state.map?.panTo(location);
+          setTimeout(() => {
+            state.map?.setZoom(18);
+            state.map?.panTo(location);
+          }, 3000);
         }
 
         const request = {
@@ -71,7 +75,7 @@ const Map: React.FC<MapProps> = ({ onClick, onIdle, children, style, ...options 
         };
         // console.log(state.country, state.city);
 
-        const callback = async (places: google.maps.places.PlaceResult[], status: google.maps.places.PlacesServiceStatus, pagination: google.maps.places.PlaceSearchPagination) => {
+        const callback = async (places: google.maps.places.PlaceResult[], status: google.maps.places.PlacesServiceStatus) => {
           if (status === google.maps.places.PlacesServiceStatus.OK && places) {
             // console.log(places);
             let popular_times = []
@@ -88,7 +92,12 @@ const Map: React.FC<MapProps> = ({ onClick, onIdle, children, style, ...options 
             }
             // console.log(popular_times)
             dispatch({ type: "updatePlaces", places: places, popular_times: popular_times });
-            // console.log(places);
+            if (state?.map) {
+              setTimeout(() => {
+                state.map?.setZoom(18);
+                state.map?.panTo(location);
+              }, 3000);
+            }
           } else {
             dispatch({ type: "updatePlaces", places: [], popular_times: [] });
           }
@@ -116,8 +125,10 @@ const Map: React.FC<MapProps> = ({ onClick, onIdle, children, style, ...options 
             userLat: Number(location.lat),
             userLong: Number(location.lng)
           });
-          state.map?.setZoom(20);
-          state.map?.panTo(location);
+          setTimeout(() => {
+            state.map?.setZoom(18);
+            state.map?.panTo(request.location);
+          }, 3000);
         }
 
         const request = {
@@ -128,7 +139,7 @@ const Map: React.FC<MapProps> = ({ onClick, onIdle, children, style, ...options 
           rankBy: google.maps.places.RankBy.PROMINENCE
         };
 
-        const callback = async (places: google.maps.places.PlaceResult[], status: google.maps.places.PlacesServiceStatus, pagination: google.maps.places.PlaceSearchPagination) => {
+        const callback = async (places: google.maps.places.PlaceResult[], status: google.maps.places.PlacesServiceStatus) => {
           if (status === google.maps.places.PlacesServiceStatus.OK && places) {
             let popular_times = []
             // console.log(places);
@@ -144,9 +155,15 @@ const Map: React.FC<MapProps> = ({ onClick, onIdle, children, style, ...options 
               popular_times.push(response.data.data)
             }
             // console.log(popular_times);
-            dispatch({ type: "updatePlaces", places: places,  popular_times: popular_times});
-            
-          } else {
+            dispatch({ type: "updatePlaces", places: places, popular_times: popular_times });
+            if (state?.map) {
+              setTimeout(() => {
+                state.map?.setZoom(18);
+                state.map?.panTo(request.location);
+              }, 3000);
+            }
+          }
+          else {
             dispatch({ type: "updatePlaces", places: [], popular_times: [] });
           }
         };
@@ -169,7 +186,7 @@ const Map: React.FC<MapProps> = ({ onClick, onIdle, children, style, ...options 
       rankBy: google.maps.places.RankBy.DISTANCE
     };
 
-    const callback = async (results: google.maps.places.PlaceResult[], status: google.maps.places.PlacesServiceStatus, pagination: google.maps.places.PlaceSearchPagination) => {
+    const callback = async (results: google.maps.places.PlaceResult[], status: google.maps.places.PlacesServiceStatus) => {
       if (status === google.maps.places.PlacesServiceStatus.OK && results) {
         // console.log(results)
         let popular_times = []
@@ -186,6 +203,12 @@ const Map: React.FC<MapProps> = ({ onClick, onIdle, children, style, ...options 
         }
         // console.log(popular_times);
         dispatch({ type: "updatePlaces", places: results, popular_times: popular_times })
+        if (state?.map) {
+          setTimeout(() => {
+            state.map?.setZoom(18);
+            state.map?.panTo(request.location);
+          }, 3000);
+        }
       } else {
         dispatch({ type: "updatePlaces", places: [], popular_times: [] })
       }
@@ -197,7 +220,7 @@ const Map: React.FC<MapProps> = ({ onClick, onIdle, children, style, ...options 
       dispatch({ type: "updatePlaces", places: [], popular_times: [] })
     }
   }
-  
+
   useEffect(() => {
     if (statePan) {
       panToUser()

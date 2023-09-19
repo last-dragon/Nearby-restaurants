@@ -21,11 +21,9 @@ const SideBar = () => {
 
     const countryRef = useRef(null);
     const cityRef = useRef(null);
+    const restaurantRef = useRef(null);
 
     const handleSearch = () => {
-        const countryValue = countryRef.current?.value || '';
-        const cityValue = cityRef.current?.value || '';
-
         dispatch({
             type: "updateCountry",
             country: countryRef.current?.value || ""
@@ -35,6 +33,22 @@ const SideBar = () => {
             city: cityRef.current?.value || ""
         });
         dispatch({ type: "searchCountryCity" });
+    };
+
+    const restaurantSearch = () => {
+        dispatch({
+            type: "updateCountry",
+            country: countryRef.current?.value || ""
+        });
+        dispatch({
+            type: "updateCity",
+            city: cityRef.current?.value || ""
+        });
+        dispatch({
+            type: "updateRestaurant",
+            restaurant: restaurantRef.current?.value || ""
+        });
+        dispatch({ type: "searchrestaurant" });
     };
 
     return (
@@ -172,11 +186,7 @@ const SideBar = () => {
                         <h3>Search Your Restaurant</h3>
                     </Grid>
                     <Grid item xs={4}>
-                        <TextField id="restaurant" label="Restaurant Name" variant="outlined" value={state.restaurant}
-                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                dispatch({ type: "updaterestaurant", restaurant: event.target.value })
-                            }
-                            } />
+                        <TextField id="city" label="City or Suburb" variant="outlined" inputRef={restaurantRef} />
                     </Grid>
                     <Grid item xs={4}>
                         <Button
@@ -186,7 +196,7 @@ const SideBar = () => {
                                 height: '45px',
                                 marginRight: '15px'
                             }}
-                            onClick={() => dispatch({ type: "searchrestaurant" })}>
+                            onClick={() => {restaurantSearch()}}>
                             <SearchOutlinedIcon />
                         </Button>
                     </Grid>
