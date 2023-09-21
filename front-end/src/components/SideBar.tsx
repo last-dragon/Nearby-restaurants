@@ -45,7 +45,7 @@ const SideBar = () => {
             city: cityRef.current?.value || ""
         });
         dispatch({
-            type: "updateRestaurant",
+            type: "updaterestaurant",
             restaurant: restaurantRef.current?.value || ""
         });
         dispatch({ type: "searchrestaurant" });

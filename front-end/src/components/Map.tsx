@@ -114,6 +114,7 @@ const Map: React.FC<MapProps> = ({ onClick, onIdle, children, style, ...options 
 
   const searchrestaurant = (city: string, country: string, restaurant: string) => {
     const geocoder = new google.maps.Geocoder();
+    console.log(city, country, restaurant);
 
     geocoder.geocode({ address: `${city}, ${country},${restaurant}` }, (results, status) => {
       if (status === google.maps.GeocoderStatus.OK && results.length > 0) {
