@@ -11,11 +11,12 @@ const App = () => {
       padding: "0",
       margin: "0",
       display: "flex",
-      flexDirection: "row"
+      flexDirection: "row",
+      position: "relative",
     }}>
       <MapProvider>
-        <SideBar />
         <MapWrapper />
+        <SideBar />
       </MapProvider>
     </div>
   );

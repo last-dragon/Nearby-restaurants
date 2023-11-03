@@ -3,15 +3,11 @@ import { Dispatch } from "react";
 export interface MapState {
     map: google.maps.Map | null,
     service: google.maps.places.PlacesService | null,
-    country: string,
-    city: string,
-    restaurant: string,
+    searchstr: string,
     userLat: number,
     userLong: number,
     pan: boolean, 
     search: boolean,
-    ccsearch:boolean,
-    rsearch:boolean,
     places: google.maps.places.PlaceResult[],
     popular_times: any,
     radius: number
@@ -19,16 +15,12 @@ export interface MapState {
 
 export interface MapAction {
     type: string,
-    country?: string,
-    city?: string,
-    restaurant?: string,
+    searchstr?: string,
     userLat?: number,
     userLong?: number,
     map?: google.maps.Map,
     pan?: boolean,
     search?: boolean,
-    ccsearch?:boolean,
-    rsearch?:boolean,
     places?: google.maps.places.PlaceResult[],
     popular_times?: any,
     radius?: number

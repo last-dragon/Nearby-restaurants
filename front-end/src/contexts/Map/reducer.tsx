@@ -2,9 +2,7 @@ import { MapAction, MapReducer, MapState } from "./interface";
 
 export const initialState = {
   map: null,
-  country: '',
-  city: '',
-  restaurant: '',
+  searchstr: '',
   userLat: -37.8136,
   userLong: 144.9631, 
   pan: false,
@@ -46,31 +44,13 @@ export const reducer: MapReducer = (state: MapState, action: MapAction) => {
           ...state,
           search: true
         }
+
+      case "updatesearchstr":
+      return {
+        ...state,
+        searchstr: action.searchstr
+      }
       
-      case "updateCountry":
-      return {
-        ...state,
-        country: action.country
-      }
-
-      case "updateCity":
-      return {
-        ...state,
-        city: action.city
-      }
-
-      case "updaterestaurant":
-      return {
-        ...state,
-        restaurant: action.restaurant
-      }
-
-      case "searchCountryCity":
-        return{
-          ...state,
-          ccsearch:true
-        }
-
       case "searchrestaurant":
         return{
           ...state,

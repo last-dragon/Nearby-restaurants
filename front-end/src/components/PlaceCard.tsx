@@ -1,12 +1,10 @@
-import { Button, Card, CardActions, CardContent, CardHeader, CardMedia, Collapse, Grid, MenuItem, Rating, Select, Typography } from "@mui/material";
+import { Button, Card, CardContent, CardMedia, Collapse, Grid, Rating, Typography } from "@mui/material";
 import MapIcon from '@mui/icons-material/Map';
 import { useContext, useEffect, useState } from "react";
 import { MapContext } from "../contexts/Map";
-import axios from 'axios';
-import { ChartContainer, BarPlot, BarChart } from '@mui/x-charts';
+import { BarPlot, BarChart } from '@mui/x-charts';
 import Lottie from 'react-lottie';
-import IconButton, { IconButtonProps } from '@mui/material/IconButton';
-import { styled } from '@mui/material/styles';
+
 import fireAnimationData from './../lottie/fire1.json';
 import coldAnimationData from './../lottie/ice.json';
 
@@ -21,19 +19,19 @@ const fireAnimationOptions = {
     autoplay: true,
     animationData: fireAnimationData,
     rendererSettings: {
-      preserveAspectRatio: 'xMidYMid slice'
+        preserveAspectRatio: 'xMidYMid slice'
     }
-  };
-  
-  const coldAnimationOptions = {
+};
+
+const coldAnimationOptions = {
     loop: true,
     autoplay: true,
     animationData: coldAnimationData,
     rendererSettings: {
-      preserveAspectRatio: 'xMidYMid slice'
+        preserveAspectRatio: 'xMidYMid slice'
     }
-  };
-const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+};
+const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 const PlaceCard = ({ place, popular_time, selectedPlace, setSelectedPlace }: PlaceCardProps) => {
 
@@ -44,22 +42,9 @@ const PlaceCard = ({ place, popular_time, selectedPlace, setSelectedPlace }: Pla
     };
 
     const [state, dispatch] = useContext(MapContext);
-    // const [responseData, setResponseData] = useState({ id: '', phone_number: '', populartimes: [], current_popularity: 0, coordinates: { lat: 0, lng: 0 } });
     const [activeStep, setActiveStep] = useState(0);
     const [timeZoneId, settimeZoneId] = useState('Australia/Melbourne');
 
-    // const api = axios.create({
-    //     baseURL: 'https://223.165.6.87:5000', // Set the base URL to your Flask backend server
-    // });
-
-    // useEffect(() => {
-    //     console.log(responseData)
-    //     console.log(responseData.populartimes)
-    //     console.log(responseData.current_popularity)
-    // }, [responseData])
-
-    // useEffect(() => console.log(selectedPlace), [selectedPlace])
-    // console.log("From Place Card", popular_time);
     useEffect(() => {
         fetch(`https://maps.googleapis.com/maps/api/timezone/json?location=${popular_time.coordinates.lat},${popular_time.coordinates.lng}&timestamp=${Math.floor(Date.now() / 1000)}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`)
             .then(res => res.json())
@@ -81,31 +66,32 @@ const PlaceCard = ({ place, popular_time, selectedPlace, setSelectedPlace }: Pla
     // console.log(currentWeekday);
     const [selectedDay, setSelectedDay] = useState(activeStep); // Default to Sunday or any other day you prefer
 
-    // console.log(selectedDay);
-
     const handleDayChange = (event) => {
         setSelectedDay(event);
     };
 
     useEffect(() => {
         // Set the activeStep based on the currentWeekday
-        if (currentWeekday === "Friday") {
+        if (currentWeekday === "Fri") {
             setSelectedDay(5);
-        } else if (currentWeekday === "Saturday") {
+        } else if (currentWeekday === "Sat") {
             setSelectedDay(6);
-        } else if (currentWeekday === "Sunday") {
+        } else if (currentWeekday === "Sun") {
             setSelectedDay(0);
-        } else if (currentWeekday === "Monday") {
+        } else if (currentWeekday === "Mon") {
             setSelectedDay(1);
-        } else if (currentWeekday === "Tuesday") {
+        } else if (currentWeekday === "Tue") {
             setSelectedDay(2);
-        } else if (currentWeekday === "Wednesday") {
+        } else if (currentWeekday === "Wed") {
             setSelectedDay(3);
         } else {
             setSelectedDay(4);
         }
     }, [currentWeekday]);
 
+    const xAxisData = ['0', '', '', '3', '', '', '6', '', '', '9', '', '', '12', '', '', '15', '', '', '18', '', '', '21', '', '', ''];
+
+    const secondAxisData = ['0', '', '', '3', '', '', '6', '', '', '9', '', '', '12', '', '', '15', '', '', '18', '', '', '21', '', '', ''];
 
 
     const getCurrentPopularity = () => {
@@ -135,15 +121,15 @@ const PlaceCard = ({ place, popular_time, selectedPlace, setSelectedPlace }: Pla
 
     const getAnimationOptions = () => {
         if (popular_time.current_popularity && popular_time.current_popularity > 50) {
-          return fireAnimationOptions;
+            return fireAnimationOptions;
         } else if (popular_time.current_popularity && popular_time.current_popularity < 50) {
-          return coldAnimationOptions;
+            return coldAnimationOptions;
         } else if (!popular_time.current_popularity && currentPopularity > 50) {
-          return fireAnimationOptions;
+            return fireAnimationOptions;
         } else {
-          return coldAnimationOptions;
+            return coldAnimationOptions;
         }
-      };
+    };
 
     return (
         <Card onClick={async () => {
@@ -236,20 +222,6 @@ const PlaceCard = ({ place, popular_time, selectedPlace, setSelectedPlace }: Pla
                                 <span >{place.vicinity}</span>
                             </Typography>
                             {(popular_time.populartimes && popular_time.populartimes.length > 0) ? (
-                                // <div>
-                                //     <Grid container spacing={2}>
-                                //         <Grid item xs={4}>
-                                //             <h3>Popular Times</h3>
-                                //         </Grid>
-                                //         <Grid item xs={4}>
-                                //             <Select value={selectedDay} onChange={handleDayChange}>
-                                //                 {daysOfWeek.map((day, index) => (
-                                //                     <MenuItem key={index} value={index}>{day}</MenuItem>
-                                //                 ))}
-                                //             </Select>
-                                //         </Grid>
-                                //     </Grid>
-                                // </div>
                                 <div>
                                     <Grid container spacing={2}>
                                         <Grid item xs={12}>
@@ -262,10 +234,26 @@ const PlaceCard = ({ place, popular_time, selectedPlace, setSelectedPlace }: Pla
                                                         key={index}
                                                         variant="contained"
                                                         color={selectedDay === index ? "secondary" : "success"}
+                                                        sx={{
+                                                            fontSize: '0.8rem', // Adjust the font size as needed
+                                                            padding: '8px', // Adjust the padding as needed
+                                                            width: '10px',
+                                                            '@media (max-width: 960px)': { // Apply styles for mobile devices
+                                                                fontSize: '0.6rem', // Adjust the font size for mobile devices
+                                                                padding: '6px', // Adjust the padding for mobile devices
+                                                                width: '5px'
+                                                            },
+                                                            '@media (max-width: 500px)': { // Apply styles for mobile devices
+                                                                fontSize: '0.4rem', // Adjust the font size for mobile devices
+                                                                padding: '4px', // Adjust the padding for mobile devices
+                                                                width: '3px'
+                                                            },
+                                                        }}
                                                         onClick={(e) => {
                                                             handleDayChange(index);
                                                             e.stopPropagation()
                                                         }}
+
                                                     >
                                                         {day}
                                                     </Button>
@@ -278,29 +266,16 @@ const PlaceCard = ({ place, popular_time, selectedPlace, setSelectedPlace }: Pla
                                 <div>No Popular Time!</div>
                             )}
                             {popular_time.populartimes && popular_time.populartimes.length > 0 && (
-                                <div>
+                                <div style={{ width: '100%', height: '300px' }}>
                                     <BarChart
-                                        width={500}
+                                        width={270}
                                         height={300}
                                         series={[{ data: popular_time.populartimes[(selectedDay + 6) % 7].data, label: popular_time.populartimes[(selectedDay + 6) % 7].name, type: 'bar' }]}
-                                        xAxis={[{ data: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'], scaleType: 'band' }]}
+                                        xAxis={[{ 
+                                            data: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'], scaleType: 'band', tickFontSize: 8 }]}
                                     >
                                         <BarPlot />
                                     </BarChart>
-                                    {/* <div>
-                <Button
-                    // disabled={activeStep === 0}
-                    onClick={() => setActiveStep(activeStep - 1)}
-                >
-                    Back
-                </Button>
-                <Button
-                    disabled={activeStep === responseData.populartimes.length - 1}
-                    onClick={() => setActiveStep(activeStep + 1)}
-                >
-                    Next
-                </Button>
-            </div> */}
                                 </div>
                             )}
                         </CardContent>

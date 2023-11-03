@@ -1,52 +1,22 @@
 import { Box, TextField, Button, CircularProgress, Grid, Typography } from "@mui/material";
-import DistanceSlider from "./DistanceSlider";
 import MyLocationOutlinedIcon from '@mui/icons-material/MyLocationOutlined';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import { useContext, useState, useRef } from "react";
 import { MapContext } from "../contexts/Map";
 import PlaceCard from "./PlaceCard";
-import { getValue } from "@testing-library/user-event/dist/utils";
-import { idText } from "typescript";
 
 const SideBar = () => {
 
     const [state, dispatch] = useContext(MapContext);
-    const [currentPage, setCurrentPage] = useState(1);
     const [selectedPlace, setSelectedPlace] = useState('');
 
-    const cardsPerPage = 20;
-    const indexOfLastCard = currentPage * cardsPerPage;
-    const indexOfFirstCard = indexOfLastCard - cardsPerPage;
-    const currentCards = state.places.slice(indexOfFirstCard, indexOfLastCard);
-
-    const countryRef = useRef(null);
-    const cityRef = useRef(null);
-    const restaurantRef = useRef(null);
-
-    const handleSearch = () => {
-        dispatch({
-            type: "updateCountry",
-            country: countryRef.current?.value || ""
-        });
-        dispatch({
-            type: "updateCity",
-            city: cityRef.current?.value || ""
-        });
-        dispatch({ type: "searchCountryCity" });
-    };
+    const searchstrRef = useRef(null);
 
     const restaurantSearch = () => {
+
         dispatch({
-            type: "updateCountry",
-            country: countryRef.current?.value || ""
-        });
-        dispatch({
-            type: "updateCity",
-            city: cityRef.current?.value || ""
-        });
-        dispatch({
-            type: "updaterestaurant",
-            restaurant: restaurantRef.current?.value || ""
+            type: "updatesearchstr",
+            searchstr: searchstrRef.current?.value || ""
         });
         dispatch({ type: "searchrestaurant" });
     };
@@ -54,21 +24,35 @@ const SideBar = () => {
     return (
         <Box sx={{
             flex: '1',
-            maxHeight: '100vh',
+            minHeight: state.places.length === 0 ? '7%' : 'auto',
+            height: state.places.length === 0 ? 'auto' : '100%',
+            width: '100%',
+            position: 'absolute',
+            top: '0',
+            left: '0',
             padding: '10px',
             margin: '0',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'flex-start',
             alignItems: 'center',
-            overflow: 'scroll'
+            overflowY: 'auto',
+            overflowX: 'hidden',
+            bgcolor: 'rgba(255, 255, 255, 0.5)',
+            // Set different widths based on screen size
+            '@media (min-width: 500px)': { // md and above
+                width: '50%',
+            },
+            '@media (min-width: 960px)': { // lg and above
+                width: '30%',
+            },
         }}>
             <Box sx={{
                 display: 'flex',
                 flexDirection: 'row',
-                width: '95%',
-                minHeight: '100px',
-                padding: '0px 10px',
+                width: 'calc(100% - 20px)',
+                minHeight: '7%',
+                padding: '',
                 justifyContent: 'center',
                 alignItems: 'center',
                 borderColor: 'primary.main',
@@ -78,89 +62,35 @@ const SideBar = () => {
                 '&:hover': {
                     borderWidth: '1px',
                 },
+                bgcolor: 'white',
+                marginTop: '10px', // Add margin top
+                marginBottom: '10px', // Add margin bottom
             }}>
-                {/* <DistanceSlider
-                    aria-label="distance slider"
-                    valueLabelDisplay="on"
-                    max={100}
-                    min={1}
-                    step={1}
-                    value={state?.radius}
-                    onChange={(ev, newValue) => {
-                        const value = Array.isArray(newValue) ? newValue[0] : newValue;
-                        dispatch({ type: "updateRadius", radius: value })
-                    }
-                    }
-                    sx={{
-                        marginRight: '15px',
-                        transform: 'translateY(40%)',
-                    }}
-                /> */}
-                <Grid container spacing={1}>
-                <Grid item xs={4}>
-                        <h3>Search Nearest Restaurant</h3>
-                </Grid>
-                <Grid item xs={4}>
-                <Button
-                    variant="contained"
-                    sx={{
-                        width: '45px',
-                        height: '45px',
-                        marginRight: '15px'
-                    }}
-                    onClick={() => dispatch({ type: "searchNearby" })}>
-                    <SearchOutlinedIcon />
-                </Button>
-                </Grid>
-                <Grid item xs={4}>
-                <Button
-                    variant="outlined"
-                    sx={{
-                        width: '45px',
-                        height: '45px',
-                    }}
-                    onClick={() => dispatch({ type: "panToUser" })}>
-                    <MyLocationOutlinedIcon />
-                </Button>
-                </Grid>
-                </Grid>
-            </Box>
-            <Box sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                width: '95%',
-                minHeight: '100px',
-                padding: '0px 10px',
-                justifyContent: 'center',
-                alignItems: 'center',
-                borderColor: 'primary.main',
-                borderWidth: '0.5px',
-                borderStyle: 'solid',
-                borderRadius: '5px',
-                '&:hover': {
-                    borderWidth: '1px',
-                },
-            }}>
-                <Grid container spacing={1}>
+                <Grid container spacing={1} alignItems="center">
                     <Grid item xs={4}>
-                        <h3>Search by Area</h3>
+                        <p>Nearest Bar</p>
                     </Grid>
-                    <Grid item xs={3}>
-                        <TextField id="country" label="Country or State" variant="outlined" inputRef={countryRef}  />
-                    </Grid>
-                    <Grid item xs={3}>
-                        <TextField id="city" label="City or Suburb" variant="outlined" inputRef={cityRef} />
-                    </Grid>
-                    <Grid item xs={2}>
+                    <Grid item xs={4}>
                         <Button
                             variant="contained"
                             sx={{
-                                width: '45px',
-                                height: '45px',
-                                marginRight: '15px'
+                                width: '25%',
+                                height: '25%',
+                                marginRight: '20%'
                             }}
-                            onClick={() => {handleSearch()}}>
+                            onClick={() => dispatch({ type: "searchNearby" })}>
                             <SearchOutlinedIcon />
+                        </Button>
+                    </Grid>
+                    <Grid item xs={4}>
+                        <Button
+                            variant="outlined"
+                            sx={{
+                                width: '25%',
+                                height: '25%',
+                            }}
+                            onClick={() => dispatch({ type: "panToUser" })}>
+                            <MyLocationOutlinedIcon />
                         </Button>
                     </Grid>
                 </Grid>
@@ -168,9 +98,9 @@ const SideBar = () => {
             <Box sx={{
                 display: 'flex',
                 flexDirection: 'row',
-                width: '95%',
-                minHeight: '100px',
-                padding: '0px 10px',
+                width: 'calc(100% - 20px)',
+                minHeight: '7%',
+                padding: '',
                 justifyContent: 'center',
                 alignItems: 'center',
                 borderColor: 'primary.main',
@@ -180,23 +110,28 @@ const SideBar = () => {
                 '&:hover': {
                     borderWidth: '1px',
                 },
+                bgcolor: 'white'
             }}>
-                <Grid container spacing={2}>
-                    <Grid item xs={4}>
-                        <h3>Search Your Restaurant</h3>
+                <Grid container spacing={1} alignItems="center">
+                    <Grid item xs={2.7}>
+                        <p>Your Bar</p>
                     </Grid>
-                    <Grid item xs={4}>
-                        <TextField id="city" label="City or Suburb" variant="outlined" inputRef={restaurantRef} />
+                    <Grid item xs={6.3} sx={{
+                        display: 'flex',
+                        justifyContent: 'flex-start',
+                        alignItems: 'center',
+                    }} >
+                        <TextField id="searchstr" label="Search" variant="outlined" inputRef={searchstrRef} />
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item xs={3} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                         <Button
                             variant="contained"
                             sx={{
-                                width: '45px',
-                                height: '45px',
-                                marginRight: '15px'
+                                width: '50%',
+                                height: '50%',
+                                marginRight: '20%'
                             }}
-                            onClick={() => {restaurantSearch()}}>
+                            onClick={() => { restaurantSearch() }}>
                             <SearchOutlinedIcon />
                         </Button>
                     </Grid>
@@ -213,9 +148,9 @@ const SideBar = () => {
                 {state.search ?
                     <CircularProgress size={100} /> :
                     state.places.length > 0 ?
-                        <Grid container spacing={2}>
+                        <Grid container spacing={2} alignItems="center" justifyContent="center">
                             {state.places.map((place, id) =>
-                                <Grid item key={place.place_id} xs={10}>
+                                <Grid item key={place.place_id} xs={10} alignItems="center" justifyContent="center">
                                     <PlaceCard place={place} popular_time={state.popular_times[id]} selectedPlace={selectedPlace} setSelectedPlace={setSelectedPlace} />
                                 </Grid>
                             )}
